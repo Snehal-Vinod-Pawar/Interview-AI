@@ -59,7 +59,7 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, getReportById, loading, getResumePdf } = useInterview()
+    const { report, getReportById, loading, downloadingResume, getResumePdf } = useInterview()
     const { interviewId } = useParams()
 
     useEffect(() => {
@@ -70,10 +70,19 @@ const Interview = () => {
 
 
 
-    if (loading || !report) {
+    if (loading && !report) {
         return (
             <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
+                <h1 className='loading-screen__title'>Loading your interview plan...</h1>
+            </main>
+        )
+    }
+
+    if (downloadingResume) {
+        return (
+            <main className='loading-screen'>
+                <h1 className='loading-screen__title'>Downloading your resume...</h1>
+                <p className='loading-screen__sub'>Please wait while we generate your PDF.</p>
             </main>
         )
     }

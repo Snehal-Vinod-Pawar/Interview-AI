@@ -8,12 +8,13 @@ const Home = () => {
     const { loading, generateReport,reports } = useInterview()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    const [ selectedFile, setSelectedFile ] = useState(null)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
     const handleGenerateReport = async () => {
-        const resumeFile = resumeInputRef.current.files[ 0 ]
+        const resumeFile = selectedFile
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
         console.log("Returned:", data);
 
@@ -24,7 +25,8 @@ if (!data) {
 
 console.log("ID:", data._id);
 
-navigate(`/interview/${data._id}`);
+setSelectedFile(null);
+        navigate(`/interview/${data._id}`);
     }
 
     if (loading) {
@@ -90,8 +92,20 @@ navigate(`/interview/${data._id}`);
                                 </span>
                                 <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
                                 <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' onChange={(e) => setSelectedFile(e.target.files[0])} />
                             </label>
+
+                        {selectedFile && (
+                            <div className="upload-status">
+                                <span className="upload-status--success">✓</span>
+                                <span className="upload-status__name">{selectedFile.name}</span>
+                                <span className="upload-status__size">{(selectedFile.size / 1024).toFixed(1)} KB</span>
+                                <button
+                                    className="upload-status__remove"
+                                    onClick={(e) => { e.preventDefault(); setSelectedFile(null); }}
+                                >✕</button>
+                            </div>
+                        )}
                         </div>
 
                         {/* OR Divider */}
